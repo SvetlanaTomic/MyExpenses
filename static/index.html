@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Expenses</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+
+</head>
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+        <a class="brand" href="#">My Expenses</a>
+    </div>
+</div>
+<div id="main" class="container">
+    <table class="table " style="width: 8px;">
+        <!--ko foreach sum-->
+        <tr>
+            <td class="col1">
+                <button data-bind="click: beginAdd" class="btn">Add Expense</button>
+            </td>
+            <td class="col2"><p>Show:<select
+                    data-bind="event: { onchange: getNewQuery() },options: queries, optionsText: 'name', optionsValue: 'id', value: selectedQueryNum"
+                    style="max-width: 100px !important;"></select></p></td>
+            <td class="col3"><p>Period:<select
+                    data-bind="event: { onchange: getNewQuery() },options: period,  value: selectedQueryPeriod"
+                    style="max-width: 100px !important;"></select></p></td>
+
+            <td class="col4" align="right"><p>Total</p></td>
+            <td class="col5" align="right"><p data-bind="text: sum"></p></td>
+        </tr>
+        <!-- /ko -->
+    </table>
+
+    <table class="table table-striped">
+        <tr>
+            <td style="width: 1px;"><b>Date</b></td>
+            <td><b>Expense</b></td>
+            <td><b>Value</b></td>
+            <td><b>Options</b></td>
+        </tr>
+
+        <!-- ko foreach: expenses -->
+        <tr>
+            <td><p data-bind="text: date"></p></td>
+
+            <td><p><b data-bind="text: title"></b></p>
+                <p data-bind="text: description"></p></td>
+
+            <td>
+                <p data-bind="text: value"></p>
+            </td>
+            <td>
+                <button data-bind="click: $parent.beginEdit" class="btn">Edit</button>
+                <button data-bind="click: $parent.remove" class="btn">Delete</button>
+            </td>
+        </tr>
+
+        <!-- /ko -->
+    </table>
+
+</div>
+<div id="add" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="addDialogLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="addDialogLabel">Add Expense</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="inputExpense">Expense</label>
+                <div class="controls">
+                    <input data-bind="value: title" type="text" id="inputExpense" placeholder="Expense title"
+                           style="width: 150px;" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputDescription">Description</label>
+                <div class="controls">
+                    <input data-bind="value: description" type="text" id="inputDescription" placeholder="Description"
+                           style="width: 300px;" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputValue">Value</label>
+                <div class="controls">
+                    <input data-bind="value: value" type="number" id="inputValue" placeholder="Value"
+                           style="width: 150px;" required>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputDate">Value</label>
+                <div class="controls">
+                    <input data-bind="value: date" type="date" id="inputDate" placeholder="Date" style="width: 150px;"
+                           required>
+                </div>
+            </div>
+            <!--
+            <div class="control-group">
+                <label class="control-label" for="inputUserID">UserID</label>
+                <div class="controls">
+                    <input data-bind="value: userID" type="number" id="inputDUserID" placeholder="UserID" style="width: 300px;">
+                </div>
+            </div>
+            -->
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button data-bind="click: addExpense" class="btn btn-primary">Add Expense</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+</div>
+<div id="edit" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="editDialogLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="editDialogLabel">Edit Expense</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="inputExpense">Expense</label>
+                <div class="controls">
+                    <input data-bind="value: title" type="text" id="inputExpense" placeholder="Expense title"
+                           style="width: 150px;">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputDescription">Description</label>
+                <div class="controls">
+                    <input data-bind="value: description" type="text" id="inputDescription" placeholder="Description"
+                           style="width: 300px;">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputValue">Value</label>
+                <div class="controls">
+                    <input data-bind="value: value" type="number" id="inputValue" placeholder="Value"
+                           style="width: 150px;">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputDate">Value</label>
+                <div class="controls">
+                    <input data-bind="value: date" type="date" id="inputDate" placeholder="Date" style="width: 150px;">
+                </div>
+            </div>
+            <!--
+            <div class="control-group">
+                <label class="control-label" for="inputUserID">UserID</label>
+                <div class="controls">
+                    <input data-bind="value: userID" type="number" id="inputDUserID" placeholder="UserID" style="width: 300px;">
+                </div>
+            </div>
+            -->
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button data-bind="click:editExpense" class="btn btn-primary">Update Expense</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+</div>
+<script type=text/javascript src="expScript.js"></script>
+</body>
+</html>
+
